@@ -1,11 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#fff0f3" />
     <meta name="mobile-web-app-capable" content="yes" />
 
@@ -14,16 +11,15 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    
     <div class="top-nav-group">
-      <button class="round-btn-top" id="rain-toggle-btn" title="Heart Rain">
-        ❤️
-      </button>
-      <button class="round-btn-top" id="calendar-btn" title="Special Countdown">
-        📅
-      </button>
+      <button class="round-btn-top" id="rain-toggle-btn" title="Heart Rain">❤️</button>
+      <button class="round-btn-top" id="calendar-btn" title="Special Countdown">📅</button>
     </div>
 
     <div class="home-container active" id="home-screen">
+      <canvas id="meteor-canvas"></canvas>
+
       <div class="container active" id="card">
         <div class="heart-icon">❤️</div>
         <h1>Hey Beautiful,</h1>
@@ -51,13 +47,12 @@
 
           <div class="letter-body">
             <p>
-              I love you so much, Samprita. I think I'm the luckiest person in
-              the world to have you as mine. I love you, my cutieepiee
-              babyyy😘😘
+              I love you so much, Samprita. I think I'm the luckiest person in the
+              world to have you as mine. I love you, my cutieepiee babyyy😘😘
             </p>
             <p>
-              U r my sunshine, my anxiety relief, my love, my world. I can't
-              live without you with me. You are my everything, Miss Dey.
+              U r my sunshine, my anxiety relief, my love, my world. I can't live
+              without you with me. You are my everything, Miss Dey.
             </p>
             <p>
               No matter where life takes us, always remember that you have my
@@ -85,10 +80,10 @@
 
     <div class="modal-overlay" id="countdown-modal">
       <div class="modal-content">
-        <button class="close-modal-btn" id="close-modal-btn"></button>
+        <button class="close-modal-btn" id="close-modal-btn">✕</button>
         <div class="modal-heart">💝</div>
-        <h2 id="countdown-title">Time Until Sept 20th</h2>
-
+        <h2 id="countdown-title">Time Since Sept 20, 2025</h2>
+        
         <div class="countdown-grid">
           <div class="countdown-box">
             <span id="days">00</span>
