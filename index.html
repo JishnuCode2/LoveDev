@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Optimized for Android Chrome & mobile viewports -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -12,17 +11,71 @@
 
     <title>For My Favorite Person ❤️</title>
 
-    <!-- Linking the external CSS file -->
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Place this right after the opening <body> tag -->
-    <button class="round-btn-top" id="rain-toggle-btn" title="Heart Rain">
-      ❤️
-    </button>
+    <div class="top-nav-group">
+      <button class="round-btn-top" id="rain-toggle-btn" title="Heart Rain">
+        ❤️
+      </button>
+      <button class="round-btn-top" id="calendar-btn" title="Special Countdown">
+        📅
+      </button>
+    </div>
 
-    <!-- SCREEN 3: Heart Rain Screen -->
-    <div class="container rain-container" id="rain-screen">
+    <div class="home-container active" id="home-screen">
+      <div class="container active" id="card">
+        <div class="heart-icon">❤️</div>
+        <h1>Hey Beautiful,</h1>
+        <p>
+          I just wanted to make a little corner of the internet just for you.
+          Thank you for being the best part of my days, making me laugh, and
+          being exactly who you are.
+        </p>
+
+        <div class="button-group">
+          <button class="btn" id="surprise-btn">Click for a surprise</button>
+          <button class="btn btn-secondary" id="read-letter-btn">
+            Read my letter ✉️
+          </button>
+        </div>
+
+        <div id="secret-message"></div>
+      </div>
+    </div>
+
+    <div class="home-container" id="letter-screen-wrapper">
+      <div class="container active letter-container" id="letter-screen">
+        <div class="letter-paper">
+          <div class="letter-header">My Dearest,</div>
+
+          <div class="letter-body">
+            <p>
+              I love you so much, Samprita. I think I'm the luckiest person in
+              the world to have you as mine. I love you, my cutieepiee
+              babyyy😘😘
+            </p>
+            <p>
+              U r my sunshine, my anxiety relief, my love, my world. I can't
+              live without you with me. You are my everything, Miss Dey.
+            </p>
+            <p>
+              No matter where life takes us, always remember that you have my
+              whole heart, completely and entirely.
+            </p>
+          </div>
+
+          <div class="letter-footer">
+            Forever & always,<br />
+            <strong>Your Ahaan❤️</strong>
+          </div>
+        </div>
+
+        <button class="btn btn-back" id="back-to-home-btn">← Go Back</button>
+      </div>
+    </div>
+
+    <div class="rain-container" id="rain-screen">
       <div class="rain-overlay">
         <h1>Falling for you...</h1>
         <p>Every single day.</p>
@@ -30,60 +83,33 @@
       </div>
     </div>
 
-    <!-- SCREEN 1: Home Card -->
-    <div class="container active" id="card">
-      <div class="heart-icon">❤️</div>
-      <h1>Hey Beautiful,</h1>
-      <p>
-        I just wanted to make a little corner of the internet just for you.
-        Thank you for being the best part of my days, making me laugh, and being
-        exactly who you are.
-      </p>
+    <div class="modal-overlay" id="countdown-modal">
+      <div class="modal-content">
+        <button class="close-modal-btn" id="close-modal-btn"></button>
+        <div class="modal-heart">💝</div>
+        <h2 id="countdown-title">Time Until Sept 20th</h2>
 
-      <div class="button-group">
-        <button class="btn" id="surprise-btn">Click for a surprise</button>
-        <button class="btn btn-secondary" id="read-letter-btn">
-          Read my letter ✉️
-        </button>
-      </div>
-
-      <!-- Secret Message Section -->
-      <div id="secret-message">
-        I love you, Samprita, more than words can say. Happy today! 😘
+        <div class="countdown-grid">
+          <div class="countdown-box">
+            <span id="days">00</span>
+            <p>Days</p>
+          </div>
+          <div class="countdown-box">
+            <span id="hours">00</span>
+            <p>Hours</p>
+          </div>
+          <div class="countdown-box">
+            <span id="minutes">00</span>
+            <p>Mins</p>
+          </div>
+          <div class="countdown-box">
+            <span id="seconds">00</span>
+            <p>Secs</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- SCREEN 2: Love Letter Paper -->
-    <div class="container letter-container" id="letter-screen">
-      <div class="letter-paper">
-        <div class="letter-header">My Dearest,</div>
-
-        <div class="letter-body">
-          <!-- Write your deep/long love letter paragraphs here -->
-          <p>
-            I love you so much, Samprita. I think I'm the luckiest person in the
-            world to have you as mine. I love you, my cutieepiee babyyy😘😘
-          </p>
-          <p>
-            U r my sunshine, my anxiety relief, my love, my world. I can't live
-            without you with me. You are my everything, Miss Dey.
-          </p>
-          <p>
-            No matter where life takes us, always remember that you have my
-            whole heart, completely and entirely.
-          </p>
-        </div>
-
-        <div class="letter-footer">
-          Forever & always,<br />
-          <strong>Your Ahaan❤️</strong>
-        </div>
-      </div>
-
-      <button class="btn btn-back" id="back-to-home-btn">← Go Back</button>
-    </div>
-
-    <!-- Linking the external JavaScript file -->
     <script src="script.js"></script>
   </body>
 </html>
