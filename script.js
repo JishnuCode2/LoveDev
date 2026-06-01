@@ -15,6 +15,7 @@ const countdownModal = document.getElementById("countdown-modal");
 const closeModalBtn = document.getElementById("close-modal-btn");
 
 // --- RUNTIME TIMEOUT TRACKING HANDLES ---
+var raining = false;
 let rainInterval = null;
 let countdownInterval = null;
 
@@ -100,23 +101,29 @@ function createHeart(button) {
 
 // --- SCREEN 3: FULLSCREEN CONTINUOUS RAIN SYSTEM ---
 function startHeartRain() {
-  homeScreen.classList.remove("active");
-  letterScreenWrapper.classList.remove("active");
-
-  setTimeout(() => {
-    rainScreen.classList.add("active");
-    rainInterval = setInterval(createFallingHeart, 300);
-  }, 150);
+  if(!raining){
+    homeScreen.classList.remove("active");
+    letterScreenWrapper.classList.remove("active");
+    raining = true;
+  
+    setTimeout(() => {
+      rainScreen.classList.add("active");
+      rainInterval = setInterval(createFallingHeart, 300);
+    }, 150);
+  }
 }
 
 function stopHeartRain() {
-  rainScreen.classList.remove("active");
-  clearInterval(rainInterval);
-
-  document.querySelectorAll(".falling-heart").forEach((h) => h.remove());
-  setTimeout(() => {
-    homeScreen.classList.add("active");
-  }, 150);
+  if(raining){
+    rainScreen.classList.remove("active");
+    clearInterval(rainInterval);
+  
+    document.querySelectorAll(".falling-heart").forEach((h) => h.remove());
+    setTimeout(() => {
+      homeScreen.classList.add("active");
+      raining = false;
+    }, 150);
+  }
 }
 
 function createFallingHeart() {
