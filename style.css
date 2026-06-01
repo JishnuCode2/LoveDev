@@ -1,3 +1,21 @@
+:root {
+  --primary-pink: #ff7597;
+  --secondary-pink: #ffb3c6;
+  --dark-pink: #c9184a;
+  --bg-color: #fff0f3;
+  --card-bg: #ffffff;
+  --paper-bg: #fffdf6;
+}
+
+/* Base resets to eliminate native browser margin/padding discrepancies */
+* {
+  box-sizing: border-box !important;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
 html, body {
   background-color: var(--bg-color);
   margin: 0 !important;
@@ -8,8 +26,37 @@ html, body {
   color: #4a4a4a;
   overflow-x: hidden;
   position: relative;
-  left: 0 !important;
-  top: 0 !important;
+}
+
+/* --- FLOATING TOP NAVIGATION GROUP --- */
+.top-nav-group {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 2500; 
+}
+
+.round-btn-top {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: var(--primary-pink);
+  color: white;
+  border: 2px solid white;
+  box-shadow: 0 4px 12px rgba(255, 117, 151, 0.25);
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.round-btn-top:active {
+  transform: scale(0.9);
+  background-color: var(--dark-pink);
 }
 
 /* --- BASE VIEWPORT WRAPPER SYSTEM --- */
@@ -17,28 +64,29 @@ html, body {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
   background: linear-gradient(to bottom, #fff0f3, #ffccd5);
   z-index: 999;
   
-  /* Absolute Isolation Grid Centering */
+  /* CRUCIAL CORRECTION: Trap canvas scaling spillover */
+  overflow: hidden !important; 
+  
+  /* Absolute Viewport Flex Centering */
   display: none; 
   justify-content: center !important; 
   align-items: center !important;     
   
-  padding: 20px !important;
+  padding: 16px !important;
   box-sizing: border-box !important;
   transition: background 2s ease;
 }
 
 .home-container.active {
-  display: flex !important; /* Forces the flex centering layout live over all platforms */
+  display: flex !important; 
 }
 
-/* Base Central Card Protection */
+/* Base Central Card Framework */
 .container {
   background: var(--card-bg);
   padding: 35px 24px;
@@ -46,13 +94,41 @@ html, body {
   box-shadow: 0 8px 24px rgba(255, 117, 151, 0.15);
   text-align: center;
   
-  /* Strict centering and viewport constraint math */
-  max-width: 400px !important;
-  width: 100% !important;
-  margin: 0 auto !important; /* Emergency absolute layout center snap */
-  box-sizing: border-box !important; 
+  /* Structural scaling locks to guarantee symmetry */
+  position: relative !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: none !important;
   
-  border: 1px solid rgba(255, 179, 198, 0.3);
-  position: relative;
+  width: 100% !important;
+  max-width: 360px !important; 
+  margin: 0 auto !important; 
+  box-sizing: border-box !important;
   z-index: 5; 
 }
+
+/* --- CARD TEXT & HEART BEAT ELEMENTS --- */
+.heart-icon {
+  font-size: 55px;
+  color: var(--primary-pink);
+  animation: heartbeat 1.4s infinite;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+@keyframes heartbeat {
+  0%, 40%, 80%, 100% { transform: scale(1); }
+  20%, 60% { transform: scale(1.12); }
+}
+
+h1 {
+  color: var(--dark-pink);
+  font-size: 26px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 24px
