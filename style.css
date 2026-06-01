@@ -62,15 +62,18 @@ body {
   height: 100vh;
   background: linear-gradient(to bottom, #fff0f3, #ffccd5);
   z-index: 999;
+  
+  /* ADD / UPDATE THESE THREE LINES HERE */
   display: none; 
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* Centers horizontally on desktop */
+  align-items: center;     /* Centers vertically on desktop */
+  
   padding: 16px;
   transition: background 2s ease;
 }
 
 .home-container.active {
-  display: flex;
+  display: flex; /* Keeps the centering context alive when active */
 }
 
 /* Base Central Glassmorphism/Material Cards */
