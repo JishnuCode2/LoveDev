@@ -15,7 +15,6 @@ const countdownModal = document.getElementById("countdown-modal");
 const closeModalBtn = document.getElementById("close-modal-btn");
 
 // --- RUNTIME TIMEOUT TRACKING HANDLES ---
-var raining = false;
 let rainInterval = null;
 let countdownInterval = null;
 
@@ -101,29 +100,23 @@ function createHeart(button) {
 
 // --- SCREEN 3: FULLSCREEN CONTINUOUS RAIN SYSTEM ---
 function startHeartRain() {
-  if(!raining){
-    homeScreen.classList.remove("active");
-    letterScreenWrapper.classList.remove("active");
-    raining = true;
-  
-    setTimeout(() => {
-      rainScreen.classList.add("active");
-      rainInterval = setInterval(createFallingHeart, 300);
-    }, 150);
-  }
+  homeScreen.classList.remove("active");
+  letterScreenWrapper.classList.remove("active");
+
+  setTimeout(() => {
+    rainScreen.classList.add("active");
+    rainInterval = setInterval(createFallingHeart, 300);
+  }, 150);
 }
 
 function stopHeartRain() {
-  if(raining){
-    rainScreen.classList.remove("active");
-    clearInterval(rainInterval);
-  
-    document.querySelectorAll(".falling-heart").forEach((h) => h.remove());
-    setTimeout(() => {
-      homeScreen.classList.add("active");
-      raining = false;
-    }, 150);
-  }
+  rainScreen.classList.remove("active");
+  clearInterval(rainInterval);
+
+  document.querySelectorAll(".falling-heart").forEach((h) => h.remove());
+  setTimeout(() => {
+    homeScreen.classList.add("active");
+  }, 150);
 }
 
 function createFallingHeart() {
@@ -132,7 +125,7 @@ function createFallingHeart() {
   heart.innerHTML = "❤️";
 
   const startPos = Math.random() * window.innerWidth;
-  const duration = Math.random() * 3 + 2;
+  const duration = Math.random() * 3 + 5;
   const size = Math.random() * 20 + 15;
   const opacity = Math.random() * 0.5 + 0.5;
 
@@ -196,3 +189,31 @@ closeModalBtn.addEventListener("click", closeModal);
 countdownModal.addEventListener("click", function (e) {
   if (e.target === countdownModal) closeModal();
 });
+
+// ---- EVENT BUTTON CODE
+
+// 1. Set your target event date here (Format: YYYY-MM-DD)
+const targetEventDate = "2026-08-01";
+
+// 2. Get the current local date
+const today = new Date();
+const year = today.getFullYear();
+const month = String(today.getMonth() + 1).padStart(2, "0");
+const day = String(today.getDate()).padStart(2, "0");
+const eventBtn = document.getElementById("event-day-btn");
+
+// Format to YYYY-MM-DD
+const currentDate = `${year}-${month}-${day}`;
+
+// 3. Reveal the button if the dates match
+if (currentDate === targetEventDate) {
+  // Note: If your styles.css requires this button to be a flex item,
+  // change "inline-block" to "flex" or "block" accordingly.
+
+  eventBtn.style.display = "inline-block";
+
+  eventBtn.addEventListener("click", function () {
+    // Replace the URL below with the page you want to redirect to
+    window.location.href = "nationalday.html";
+  });
+}

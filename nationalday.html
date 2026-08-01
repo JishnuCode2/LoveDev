@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>National GF Day ❤️</title>
+    <!-- CryptoJS for secure AES encryption -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap");
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        /* Romantic sunset sky background */
+        background: linear-gradient(
+          180deg,
+          #ffb3c6 0%,
+          #ffcbf2 30%,
+          #a9def9 100%
+        );
+        font-family: "Poppins", sans-serif;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        perspective: 1200px; /* Needed for 3D unfold effect */
+      }
+
+      /* --- Ocean & Waves --- */
+      #ocean-depths {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 55%;
+        background: linear-gradient(
+          180deg,
+          rgba(169, 222, 249, 0.4) 0%,
+          rgba(72, 149, 239, 0.7) 100%
+        );
+        backdrop-filter: blur(2px);
+        z-index: 1;
+      }
+
+      .wave {
+        position: absolute;
+        bottom: 54.5%;
+        left: 0;
+        width: 200%;
+        height: 120px;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118,130.82,125.13,200.73,121.73,243.64,119.64,284.15,97.71,321.39,56.44Z' fill='%23a9def9' opacity='0.7'/%3E%3C/svg%3E")
+          repeat-x;
+        animation: waveAnim 15s linear infinite;
+        z-index: 2;
+      }
+
+      .wave:nth-child(2) {
+        bottom: 53%;
+        opacity: 0.5;
+        animation: waveAnim 10s linear infinite reverse;
+        z-index: 3;
+      }
+
+      @keyframes waveAnim {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* --- Submerged Hearts --- */
+      #hearts-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 4;
+      }
+
+      .heart {
+        position: absolute;
+        font-size: 24px;
+        opacity: 0.8;
+      }
+
+      @keyframes bobbing {
+        0% {
+          transform: translateY(0) rotate(-5deg);
+        }
+        50% {
+          transform: translateY(-40px) rotate(10deg) scale(1.1);
+        }
+        100% {
+          transform: translateY(0) rotate(-5deg);
+        }
+      }
+
+      /* --- UI Components --- */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(72, 149, 239, 0.2);
+        text-align: center;
+        z-index: 10;
+        width: 90%;
+        max-width: 400px;
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+
+      h2 {
+        color: #ff4d6d;
+        margin-bottom: 20px;
+        font-family: "Dancing Script", cursive;
+        font-size: 2.8em;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+      }
+
+      input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #ffb3c1;
+        border-radius: 10px;
+        font-size: 16px;
+        outline: none;
+        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.9);
+        text-align: center;
+        transition: border 0.3s;
+      }
+
+      input[type="password"]:focus {
+        border-color: #ff4d6d;
+      }
+
+      button {
+        background: #ff4d6d;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 30px;
+        cursor: pointer;
+        transition:
+          background 0.3s,
+          transform 0.2s;
+        box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+      }
+
+      button:hover {
+        background: #c9184a;
+        transform: translateY(-2px);
+      }
+
+      button:disabled {
+        background: #8e9aaf;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .error {
+        color: #d62828;
+        font-size: 0.9em;
+        margin-top: 15px;
+        font-weight: 600;
+        min-height: 20px;
+      }
+      .attempts {
+        color: #333;
+        font-size: 0.8em;
+        margin-top: 5px;
+        font-weight: 600;
+      }
+
+      /* --- Letter Unfolding Animation --- */
+      #letter-container {
+        display: none;
+        max-width: 600px;
+        width: 90%;
+        background: #fffdf5;
+        padding: 50px 40px;
+        border-radius: 10px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 10;
+        font-family: "Dancing Script", cursive;
+        font-size: 1.6em;
+        color: #333;
+        line-height: 1.6;
+        background-image: repeating-linear-gradient(
+          transparent,
+          transparent 31px,
+          #ffb3c1 31px,
+          #ffb3c1 32px
+        );
+        background-attachment: local;
+        transform-origin: top center;
+        opacity: 0;
+      }
+
+      .stamp {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        font-size: 2em;
+        transform: rotate(15deg);
+      }
+
+      .unfold-animation {
+        animation: unfold 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      }
+
+      @keyframes unfold {
+        0% {
+          transform: rotateX(-90deg) scale(0.9);
+          opacity: 0;
+        }
+        40% {
+          transform: rotateX(10deg) scale(1);
+          opacity: 1;
+        }
+        70% {
+          transform: rotateX(-5deg);
+          opacity: 1;
+        }
+        100% {
+          transform: rotateX(0deg);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ocean-depths"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div id="hearts-container"></div>
+
+    <!-- Login Screen -->
+    <div class="glass-panel" id="login-panel">
+      <h2>For Your Eyes Only ❤️</h2>
+      <input
+        type="password"
+        id="password-input"
+        placeholder="Enter our secret password"
+        autocomplete="off"
+      />
+      <button id="unlock-btn" onclick="attemptUnlock()">Unlock Letter</button>
+      <div class="error" id="error-msg"></div>
+      <div class="attempts" id="attempts-msg">Attempts remaining: 10</div>
+    </div>
+
+    <!-- Love Letter Screen -->
+    <div id="letter-container">
+      <div class="stamp">💋</div>
+      <div id="letter-content"></div>
+    </div>
+
+    <!-- Romantic song audio -->
+    <audio id="romanticSong" loop>
+      <source src="romantic.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <script>
+      const secretData =
+        "U2FsdGVkX1/dAXPuJF42t1U6Zyul7u9lXo6SnAp/HHxgxulf6StxYJw2hFHWpyGue1pclfT1PVTlCiUChMUb+Ku0Q5StsrUwuf/Tr49sFFrVxFQqy0A0W6O+e4Pwvf64I9Unsbck0VDl02vIyVW6YAuKAE1FjbzXRe++kGPiwRyljemo3MtSlNzV101MgCAl366oZrA58iTTA6L5McNkxDPodWwQyv4bdI/QzyMP6JYlqh2INEuIYIHM/b8GNSaNGnVZHxXVezzQH35r201gqkAH8MRLFFcLrPDzLgYVFkmh2vE5pV6WYwZ9IHAtbOWyvELVaY93bDKlCk1DKLlIbMJesuwKOSG5nK/3WYNcLenTHDBRZeBT0CKm+Ol8kAfFKyhDxltVKUs4ldNuubNJB6pfZAIcgtdjX8DMSCzVVr6h+IjRB2PPaNILvvi/N3QPFW0uCPiJ9TIeCmRvq2fcVVY0WuIqWIgC9l3vcXpQisGYeIUrkqp2tM+3clu3vO0h";
+
+      const MAX_ATTEMPTS = 10;
+      let attemptsLeft = localStorage.getItem("gf_attempts");
+
+      if (attemptsLeft === null) {
+        attemptsLeft = MAX_ATTEMPTS;
+        localStorage.setItem("gf_attempts", attemptsLeft);
+      } else {
+        attemptsLeft = parseInt(attemptsLeft);
+      }
+
+      const btn = document.getElementById("unlock-btn");
+      const input = document.getElementById("password-input");
+      const errorMsg = document.getElementById("error-msg");
+      const attemptsMsg = document.getElementById("attempts-msg");
+
+      updateAttemptsUI();
+
+      input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          attemptUnlock();
+        }
+      });
+
+      function updateAttemptsUI() {
+        attemptsMsg.innerText = `Attempts remaining: ${attemptsLeft}`;
+        if (attemptsLeft <= 0) {
+          btn.disabled = true;
+          input.disabled = true;
+          errorMsg.innerText = "Too many incorrect attempts. Letter locked.";
+          attemptsMsg.style.color = "#d62828";
+        }
+      }
+
+      function attemptUnlock() {
+        if (attemptsLeft <= 0) return;
+
+        const password = input.value;
+        if (!password) {
+          errorMsg.innerText = "Please enter a password.";
+          return;
+        }
+
+        try {
+          // Decrypting the text based on user input
+          const bytes = CryptoJS.AES.decrypt(secretData, password);
+          const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+
+          // Check for our hidden validity tag
+          if (decryptedText && decryptedText.endsWith("[VALID]")) {
+            const finalLetter = decryptedText.replace("[VALID]", "");
+            showLetter(finalLetter);
+          } else {
+            throw new Error("Invalid password");
+          }
+        } catch (error) {
+          // If it fails to decrypt properly, deduct an attempt
+          attemptsLeft--;
+          localStorage.setItem("gf_attempts", attemptsLeft);
+          input.value = "";
+
+          if (attemptsLeft > 0) {
+            errorMsg.innerText = "Incorrect password. Try again.";
+          }
+          updateAttemptsUI();
+        }
+      }
+
+      function fadeInAudio(audio, duration = 3000) {
+        audio.volume = 0;
+        audio.play().catch((err) => console.log(err));
+
+        const interval = 50; // update every 50ms
+        const step = interval / duration;
+
+        const fade = setInterval(() => {
+          if (audio.volume < 1) {
+            audio.volume = Math.min(audio.volume + step, 1);
+          } else {
+            clearInterval(fade);
+          }
+        }, interval);
+      }
+
+      function showLetter(text) {
+        const loginPanel = document.getElementById("login-panel");
+        loginPanel.style.transform = "scale(0.8)";
+        loginPanel.style.opacity = "0";
+
+        setTimeout(() => {
+          loginPanel.style.display = "none";
+
+          const letterContainer = document.getElementById("letter-container");
+          document.getElementById("letter-content").innerHTML = text;
+
+          letterContainer.style.display = "block";
+          letterContainer.classList.add("unfold-animation");
+
+          // Play the romantic song with a fade-in effect
+          const song = document.getElementById("romanticSong");
+          fadeInAudio(song, 3000); // 3-second fade in
+        }, 600);
+      }
+
+      // --- Submerged Bobbing Hearts Generator ---
+      function createSubmergedHearts() {
+        const container = document.getElementById("hearts-container");
+        const heartIcons = ["❤️", "💖", "💕", "💗", "🫧", "🫧"];
+
+        for (let i = 0; i < 25; i++) {
+          const heart = document.createElement("div");
+          heart.classList.add("heart");
+          heart.innerText =
+            heartIcons[Math.floor(Math.random() * heartIcons.length)];
+
+          const randomX = Math.random() * 100;
+          const randomY = Math.random() * 50 + 45;
+
+          heart.style.left = randomX + "vw";
+          heart.style.top = randomY + "vh";
+
+          const bobDuration = Math.random() * 3 + 3;
+          const bobDelay = Math.random() * 5;
+          const fontSize = Math.random() * 20 + 15;
+
+          heart.style.fontSize = fontSize + "px";
+          heart.style.animation = `bobbing ${bobDuration}s ease-in-out ${bobDelay}s infinite`;
+
+          if (heart.innerText === "🫧") {
+            heart.style.opacity = 0.5;
+          }
+
+          container.appendChild(heart);
+        }
+      }
+
+      createSubmergedHearts();
+    </script>
+  </body>
+</html>
