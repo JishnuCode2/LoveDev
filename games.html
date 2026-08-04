@@ -1,0 +1,1809 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Love Arcade - 8 Mini Games</title>
+    <style>
+      :root {
+        --bg-color: #ffeef2;
+        --card-bg: #ffffff;
+        --primary: #ff4d6d;
+        --primary-hover: #ff758f;
+        --text-color: #590d22;
+        --accent: #ffb3c1;
+        --dark-pink: #c9184a;
+        --hole-bg: #ffe0e6;
+        --heart-bg: rgba(0, 150, 255, 0.25);
+        --maze-wall: #590d22;
+        --maze-path: #ffffff;
+      }
+
+      body.dark-theme {
+        --bg-color: #1b0b2e;
+        --card-bg: #2a1245;
+        --primary: #b5179e;
+        --primary-hover: #d800a6;
+        --text-color: #f72585;
+        --accent: #7209b7;
+        --dark-pink: #480ca8;
+        --hole-bg: #3a0ca3;
+        --heart-bg: rgba(181, 23, 158, 0.35);
+        --maze-wall: #f72585;
+        --maze-path: #180829;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          "Segoe UI",
+          -apple-system,
+          BlinkMacSystemFont,
+          Roboto,
+          sans-serif;
+        transition:
+          background-color 0.4s ease,
+          color 0.4s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      .heart-bg-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .floating-heart {
+        position: absolute;
+        top: 100vh;
+        opacity: 0;
+        color: var(--heart-bg);
+        font-size: 1.8rem;
+        user-select: none;
+        animation: floatUp 8s linear infinite;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) scale(0.8) rotate(0deg);
+          opacity: 0;
+        }
+        15% {
+          opacity: 0.8;
+        }
+        85% {
+          opacity: 0.8;
+        }
+        100% {
+          transform: translateY(-115vh) scale(1.2) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 12px;
+        z-index: 1;
+      }
+
+      header h1 {
+        font-size: 2rem;
+        color: var(--primary);
+        margin-bottom: 4px;
+      }
+
+      .mode-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        background: var(--card-bg);
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 2px solid var(--accent);
+        font-weight: bold;
+        font-size: 0.9rem;
+        z-index: 1;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 24px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: var(--primary);
+      }
+      input:checked + .slider:before {
+        transform: translateX(22px);
+      }
+
+      .nav-tabs {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 20px;
+        z-index: 1;
+        width: 100%;
+        max-width: 550px;
+      }
+
+      .nav-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .tab-btn {
+        background-color: var(--card-bg);
+        border: 2px solid var(--accent);
+        color: var(--text-color);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+        flex: 1 1 auto;
+        max-width: 120px;
+        text-align: center;
+      }
+
+      .tab-btn:hover,
+      .tab-btn.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+      }
+
+      .game-card {
+        background-color: var(--card-bg);
+        width: 100%;
+        max-width: 550px;
+        border-radius: 24px;
+        padding: 24px 20px;
+        box-shadow: 0 12px 30px rgba(89, 13, 34, 0.12);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .game-card#game-6 {
+        background: linear-gradient(145deg, #fff5f7 0%, #fbe8ee 100%);
+        border: 3px solid #ffccd5;
+        box-shadow: 0 15px 35px rgba(255, 77, 109, 0.18);
+      }
+
+      .game-card#game-6 h2 {
+        color: #a4133c;
+        font-size: 1.6rem;
+      }
+
+      .game-card#game-6 .game-subtitle {
+        color: #800f2f;
+        font-weight: 600;
+      }
+
+      .game-card.active {
+        display: flex;
+      }
+      .game-card h2 {
+        color: var(--primary);
+        font-size: 1.5rem;
+        margin-bottom: 4px;
+      }
+      .game-subtitle {
+        font-size: 0.85rem;
+        color: #777;
+        margin-bottom: 15px;
+      }
+
+      input[type="text"] {
+        width: 90%;
+        padding: 12px 15px;
+        margin: 8px 0;
+        border: 2px solid var(--accent);
+        border-radius: 10px;
+        outline: none;
+        font-size: 1rem;
+        text-align: center;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+      }
+
+      button.action-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 25px;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: all 0.2s;
+        touch-action: manipulation;
+        box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+      }
+
+      button.action-btn:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 77, 109, 0.4);
+      }
+
+      .game-card#game-6 button.action-btn {
+        background: linear-gradient(135deg, #ff4d6d 0%, #c9184a 100%);
+        color: white;
+        border: none;
+        box-shadow: 0 6px 15px rgba(201, 24, 74, 0.35);
+      }
+
+      .game-card#game-6 button.action-btn:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(201, 24, 74, 0.45);
+      }
+
+      .meter-bar {
+        width: 100%;
+        height: 25px;
+        background-color: var(--hole-bg);
+        border-radius: 15px;
+        overflow: hidden;
+        margin: 20px 0;
+        border: 1px solid var(--accent);
+      }
+
+      .meter-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--accent), var(--primary));
+        transition: width 1s ease-in-out;
+      }
+
+      .grid-memory {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .grid-memory.hard-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 5px;
+      }
+
+      .card-mem {
+        aspect-ratio: 1;
+        background-color: var(--accent);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.3s;
+        color: #fff;
+        touch-action: manipulation;
+      }
+
+      .grid-memory.hard-grid .card-mem {
+        font-size: 1.2rem;
+      }
+      .card-mem.flipped {
+        background-color: var(--hole-bg);
+        transform: rotateY(180deg);
+      }
+
+      .cookie-img {
+        font-size: 4.5rem;
+        cursor: pointer;
+        transition: transform 0.2s;
+        user-select: none;
+        display: inline-block;
+        touch-action: manipulation;
+      }
+
+      .cookie-img:hover:not(.disabled) {
+        transform: scale(1.1) rotate(5deg);
+      }
+      .cookie-img.disabled {
+        cursor: default;
+        opacity: 0.8;
+      }
+
+      .fortune-paper {
+        background-color: #fffdd0;
+        border: 1px dashed #d4a373;
+        padding: 15px;
+        margin-top: 15px;
+        font-style: italic;
+        border-radius: 8px;
+        color: #4a3b32;
+        width: 100%;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+      }
+
+      canvas#cupidCanvas {
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        background-color: var(--hole-bg);
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        touch-action: none;
+        cursor:
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="0" x2="12" y2="24"/><line x1="0" y1="12" x2="24" y2="12"/></svg>')
+            12 12,
+          crosshair;
+      }
+
+      .whack-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        width: 100%;
+        margin-top: 15px;
+        position: relative;
+        cursor:
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><text y="20" font-size="20">🔨</text></svg>')
+            4 4,
+          pointer;
+        touch-action: manipulation;
+      }
+
+      .whack-hole {
+        aspect-ratio: 1.1;
+        background-color: var(--hole-bg);
+        border: 2px dashed var(--accent);
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .whack-item {
+        font-size: 2.8rem;
+        position: absolute;
+        bottom: -70px;
+        transition: bottom 0.2s ease-out;
+        user-select: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 70px;
+        height: 70px;
+        pointer-events: auto;
+      }
+
+      .whack-item.up {
+        bottom: 2px;
+      }
+
+      .whack-effect {
+        position: absolute;
+        font-size: 2.5rem;
+        pointer-events: none;
+        z-index: 15;
+        animation: hammerSlam 0.35s ease-out forwards;
+        transform-origin: bottom right;
+      }
+
+      @keyframes hammerSlam {
+        0% {
+          transform: scale(1.4) rotate(-45deg);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1) rotate(15deg);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(0.9) rotate(0deg);
+          opacity: 0;
+        }
+      }
+
+      .whack-score-pop {
+        position: absolute;
+        font-weight: 900;
+        font-size: 1.5rem;
+        color: #2ec4b6;
+        text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+        z-index: 20;
+        animation: scoreFloatUp 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28)
+          forwards;
+      }
+
+      .whack-score-pop.minus {
+        color: #e63946;
+      }
+
+      @keyframes scoreFloatUp {
+        0% {
+          transform: translateY(0) scale(0.5);
+          opacity: 0;
+        }
+        30% {
+          transform: translateY(-15px) scale(1.3);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-40px) scale(1);
+          opacity: 0;
+        }
+      }
+
+      .maze-board {
+        display: grid;
+        gap: 2px;
+        background-color: var(--accent);
+        padding: 4px;
+        border-radius: 8px;
+        margin: 15px auto;
+        max-width: 100%;
+        overflow: auto;
+      }
+
+      .maze-cell {
+        width: 28px;
+        height: 28px;
+        background-color: var(--maze-path);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        user-select: none;
+        border-radius: 2px;
+      }
+
+      .maze-cell.wall {
+        background-color: var(--maze-wall);
+      }
+
+      .maze-controls {
+        display: grid;
+        grid-template-columns: repeat(3, 50px);
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .maze-btn {
+        height: 50px;
+        font-weight: bold;
+        font-size: 1.3rem;
+        border-radius: 12px;
+        border: 1px solid var(--accent);
+        background-color: var(--hole-bg);
+        color: var(--text-color);
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      canvas#catcherCanvas {
+        border: 3px solid #ff758f;
+        border-radius: 20px;
+        background: linear-gradient(180deg, #4a154b 0%, #240a2c 100%);
+        box-shadow:
+          0 8px 25px rgba(74, 21, 75, 0.25),
+          inset 0 0 20px rgba(255, 117, 143, 0.3);
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        touch-action: none;
+        cursor: pointer;
+      }
+
+      .quiz-option {
+        width: 100%;
+        padding: 14px;
+        margin: 6px 0;
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        font-weight: bold;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        touch-action: manipulation;
+      }
+
+      .quiz-option:hover,
+      .quiz-option:active {
+        background-color: var(--hole-bg);
+        transform: scale(0.99);
+      }
+
+      .timer-badge {
+        font-weight: bold;
+        color: var(--primary);
+        margin-top: 5px;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="heart-bg-container" id="heartBg"></div>
+
+    <header>
+      <h1>💖 Love Arcade 💖</h1>
+      <p>Select a mini-game to play!</p>
+    </header>
+
+    <div class="mode-container">
+      <span>Normal</span>
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="hardModeToggle"
+          onchange="toggleHardMode()"
+        />
+        <span class="slider"></span>
+      </label>
+      <span style="color: var(--primary)">Hard Mode 🔥</span>
+    </div>
+
+    <div class="nav-tabs">
+      <div class="nav-row">
+        <button class="tab-btn active" onclick="switchGame(0)">Meter</button>
+        <button class="tab-btn" onclick="switchGame(1)">Memory</button>
+        <button class="tab-btn" onclick="switchGame(2)">Fortune</button>
+        <button class="tab-btn" onclick="switchGame(3)">Cupid</button>
+      </div>
+      <div class="nav-row">
+        <button class="tab-btn" onclick="switchGame(4)">Whack-a-Gift</button>
+        <button class="tab-btn" onclick="switchGame(5)">Maze</button>
+        <button class="tab-btn" onclick="switchGame(6)">Catcher</button>
+        <button class="tab-btn" onclick="switchGame(7)">Quiz</button>
+      </div>
+    </div>
+
+    <!-- Game 1: Love Meter -->
+    <div class="game-card active" id="game-0">
+      <h2>Love Compatibility</h2>
+      <p class="game-subtitle">Test the spark between two names!</p>
+      <input type="text" id="name1" placeholder="Your Name" />
+      <input type="text" id="name2" placeholder="Partner / Crush Name" />
+      <button class="action-btn" onclick="calculateLove()">
+        Calculate Match
+      </button>
+
+      <div class="meter-bar">
+        <div class="meter-fill" id="meterFill"></div>
+      </div>
+      <h3 id="loveResult" style="font-size: 1.1rem">Enter names to begin!</h3>
+    </div>
+
+    <!-- Game 2: Heart Match Memory -->
+    <div class="game-card" id="game-1">
+      <h2>Heart Match</h2>
+      <p class="game-subtitle">Pair all the matching love emojis!</p>
+      <div class="timer-badge" id="memoryTimer">Time: 0.0s</div>
+      <div class="grid-memory" id="memoryGrid"></div>
+      <button class="action-btn" onclick="initMemoryGame()">Reset Game</button>
+    </div>
+
+    <!-- Game 3: Love Fortune Cookie -->
+    <div class="game-card" id="game-2">
+      <h2>Love Fortune Cookie</h2>
+      <p class="game-subtitle">
+        Tap the fortune cookie to reveal your romantic fate!
+      </p>
+      <div style="margin: 15px 0">
+        <span class="cookie-img" id="cookieIcon" onclick="crackCookie()"
+          >🥠</span
+        >
+      </div>
+      <div class="fortune-paper" id="fortuneText">
+        Click the cookie to open it...
+      </div>
+      <button class="action-btn" onclick="resetCookie()">New Cookie</button>
+    </div>
+
+    <!-- Game 4: Cupid's Target Practice -->
+    <div class="game-card" id="game-3">
+      <h2>Cupid's Target Practice</h2>
+      <p class="game-subtitle">Pop hearts to reach target points!</p>
+      <canvas id="cupidCanvas" width="300" height="230"></canvas>
+      <p style="margin-top: 10px; font-weight: bold">
+        Score: <span id="cupidScore">0</span> /
+        <span id="cupidTarget">100</span>
+      </p>
+      <button class="action-btn" onclick="startCupidGame()">
+        Start / Reset
+      </button>
+    </div>
+
+    <!-- Game 5: Whack-a-Gift -->
+    <div class="game-card" id="game-4">
+      <h2>Whack-A-Gift 🎁</h2>
+      <p class="game-subtitle">Tap gifts to whack them with your hammer!</p>
+      <div style="display: flex; justify-content: space-around; width: 100%">
+        <p style="font-weight: bold">Score: <span id="whackScore">0</span></p>
+        <p style="font-weight: bold">Time: <span id="whackTime">25</span>s</p>
+      </div>
+      <div class="whack-grid" id="whackGrid">
+        <div class="whack-hole"><span class="whack-item">🎁</span></div>
+        <div class="whack-hole"><span class="whack-item">🎁</span></div>
+        <div class="whack-hole"><span class="whack-item">🎁</span></div>
+        <div class="whack-hole"><span class="whack-item">🎁</span></div>
+        <div class="whack-hole"><span class="whack-item">🎁</span></div>
+        <div class="whack-hole"><span class="whack-item">🎁</span></div>
+      </div>
+      <button class="action-btn" onclick="startWhackGame()">Start Game</button>
+    </div>
+
+    <!-- Game 6: Maze Solver -->
+    <div class="game-card" id="game-5">
+      <h2>Maze Runner 🌀</h2>
+      <p class="game-subtitle">Guide Cupid (💘) to the Heart Target (💖)!</p>
+      <div class="maze-board" id="mazeBoard"></div>
+      <div class="maze-controls">
+        <div></div>
+        <button class="maze-btn" onclick="movePlayer(0, -1)">▲</button>
+        <div></div>
+        <button class="maze-btn" onclick="movePlayer(-1, 0)">◄</button>
+        <button class="maze-btn" onclick="movePlayer(0, 1)">▼</button>
+        <button class="maze-btn" onclick="movePlayer(1, 0)">►</button>
+      </div>
+      <button class="action-btn" onclick="initMazeGame()">New Maze</button>
+    </div>
+
+    <!-- Game 7: Heart Catcher -->
+    <div class="game-card" id="game-6">
+      <h2>Heart Catcher 🧺</h2>
+      <p class="game-subtitle" id="catcherSubtitle">
+        Reach 100 points! Avoid bombs & catch falling hearts!
+      </p>
+      <canvas id="catcherCanvas" width="320" height="240"></canvas>
+      <p
+        style="
+          margin-top: 12px;
+          font-weight: 700;
+          color: #590d22;
+          font-size: 1.05rem;
+        "
+      >
+        Score: <span id="catcherScore" style="color: #d90429">0</span> /
+        <span id="catcherTarget">100</span> | Lives:
+        <span id="catcherLives" style="color: #ff4d6d">3</span>
+      </p>
+      <button class="action-btn" onclick="startCatcherGame()">
+        Start Game
+      </button>
+    </div>
+
+    <!-- Game 8: Love Quiz -->
+    <div class="game-card" id="game-7">
+      <h2>Love Quiz ❓</h2>
+      <p class="game-subtitle">Test your romantic knowledge!</p>
+      <div class="timer-badge" id="quizTimerDisplay" style="display: none">
+        Time Left: 10s
+      </div>
+      <div id="quizContainer" style="width: 100%">
+        <h3 id="quizQuestion" style="margin-bottom: 15px; font-size: 1.1rem">
+          Question goes here
+        </h3>
+        <div id="quizOptions"></div>
+      </div>
+      <p style="margin-top: 15px; font-weight: bold" id="quizScoreText">
+        Score: 0
+      </p>
+      <button class="action-btn" onclick="initQuizGame()">Restart Quiz</button>
+    </div>
+
+    <script>
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      let audioCtx;
+
+      function initAudio() {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+      }
+
+      function playSound(type) {
+        try {
+          initAudio();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          const now = audioCtx.currentTime;
+
+          if (type === "click") {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(600, now);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            osc.start(now);
+            osc.stop(now + 0.05);
+          } else if (type === "pop") {
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now);
+            osc.stop(now + 0.1);
+          } else if (type === "whack") {
+            osc.type = "square";
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+            osc.start(now);
+            osc.stop(now + 0.12);
+          } else if (type === "win") {
+            const notes = [523.25, 659.25, 783.99, 1046.5];
+            notes.forEach((freq, idx) => {
+              const noteOsc = audioCtx.createOscillator();
+              const noteGain = audioCtx.createGain();
+              noteOsc.connect(noteGain);
+              noteOsc.connect(audioCtx.destination);
+              noteOsc.frequency.setValueAtTime(freq, now + idx * 0.1);
+              noteGain.gain.setValueAtTime(0.2, now + idx * 0.1);
+              noteGain.gain.exponentialRampToValueAtTime(
+                0.01,
+                now + idx * 0.1 + 0.2,
+              );
+              noteOsc.start(now + idx * 0.1);
+              noteOsc.stop(now + idx * 0.1 + 0.2);
+            });
+          } else if (type === "bomb") {
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(120, now);
+            osc.frequency.linearRampToValueAtTime(30, now + 0.3);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            osc.start(now);
+            osc.stop(now + 0.3);
+          } else if (type === "match") {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.setValueAtTime(880, now + 0.1);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+          } else if (type === "step") {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(320, now);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+            osc.start(now);
+            osc.stop(now + 0.04);
+          } else if (type === "cookie") {
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(200, now);
+            osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            osc.start(now);
+            osc.stop(now + 0.15);
+          }
+        } catch (e) {}
+      }
+
+      let isHardMode = false;
+      let currentGameIndex = 0;
+
+      function initFloatingHearts() {
+        const heartBg = document.getElementById("heartBg");
+        heartBg.innerHTML = "";
+        for (let i = 0; i < 18; i++) {
+          const heart = document.createElement("div");
+          heart.classList.add("floating-heart");
+          heart.innerText = "💙";
+          heart.style.left = `${Math.random() * 92}vw`;
+          heart.style.animationDuration = `${Math.random() * 5 + 6}s`;
+          heart.style.animationDelay = `${Math.random() * 5}s`;
+          heartBg.appendChild(heart);
+        }
+      }
+
+      function toggleHardMode() {
+        playSound("click");
+        isHardMode = document.getElementById("hardModeToggle").checked;
+        const hearts = document.querySelectorAll(".floating-heart");
+
+        if (isHardMode) {
+          document.body.classList.add("dark-theme");
+          hearts.forEach((h) => (h.innerText = "💜"));
+        } else {
+          document.body.classList.remove("dark-theme");
+          hearts.forEach((h) => (h.innerText = "💙"));
+        }
+        switchGame(currentGameIndex);
+      }
+
+      function switchGame(index) {
+        playSound("click");
+        currentGameIndex = index;
+        const cards = document.querySelectorAll(".game-card");
+        const tabs = document.querySelectorAll(".tab-btn");
+
+        cards.forEach((card, i) => {
+          card.classList.toggle("active", i === index);
+          tabs[i].classList.toggle("active", i === index);
+        });
+
+        clearInterval(memoryTimerInterval);
+        clearInterval(memoryCountdown);
+        clearInterval(whackTimer);
+        clearInterval(whackLoop);
+        clearInterval(catcherLoop);
+        clearInterval(quizTimerInterval);
+
+        if (index === 1) initMemoryGame();
+        if (index === 2) resetCookie();
+        if (index === 3) startCupidGame();
+        if (index === 4) resetWhackGame();
+        if (index === 5) initMazeGame();
+        if (index === 6) startCatcherGame();
+        if (index === 7) initQuizGame();
+      }
+
+      // Game 1: Love Meter
+      const customLovePairs = {
+        "mehuli+soham": { pct: 100, msg: "100% - Good riddance" },
+        "agniv+yajnaseni": { pct: 25, msg: "25% - Never meant to be" },
+        "sreyan+subhomita": { pct: 10, msg: "10% - Domestic abuse" },
+        "adrija+swastik": { pct: 75, msg: "75% - Believe in them" },
+        "adrija+riddhijit": { pct: 0, msg: "0% - Already rejected" },
+        "romeo+juliet": {
+          pct: 100,
+          msg: "📜 100% - Classic Legendary Romance!",
+        },
+      };
+
+      function calculateLove() {
+        playSound("click");
+        const raw1 = document.getElementById("name1").value.trim();
+        const raw2 = document.getElementById("name2").value.trim();
+        if (!raw1 || !raw2) return alert("Please enter both names!");
+
+        const n1 = raw1.toLowerCase();
+        const n2 = raw2.toLowerCase();
+        let percentage = null,
+          customMessage = null;
+
+        if (
+          (n1 === "jishnu" && n2 === "samprita") ||
+          (n1 === "samprita" && n2 === "jishnu")
+        ) {
+          percentage = 100;
+          customMessage =
+            "🔥 100% - Perfect Soulmates! Destiny Written in the Stars!";
+        } else if (
+          n1 === "jishnu" ||
+          n2 === "jishnu" ||
+          n1 === "samprita" ||
+          n2 === "samprita"
+        ) {
+          percentage = 0;
+          customMessage =
+            "💔 0% - Heart Sealed! Only Jishnu & Samprita belong together!";
+        } else {
+          const pairKey = [n1, n2].sort().join("+");
+          if (customLovePairs[pairKey]) {
+            percentage = customLovePairs[pairKey].pct;
+            customMessage = customLovePairs[pairKey].msg;
+          }
+        }
+
+        if (percentage === null) {
+          let sum = 0;
+          for (let i = 0; i < (n1 + n2).length; i++)
+            sum += (n1 + n2).charCodeAt(i);
+          percentage = isHardMode ? (sum % 41) + 20 : (sum % 61) + 40;
+        }
+
+        document.getElementById("loveResult").innerText = "Analyzing sparks...";
+        document.getElementById("meterFill").style.width = "0%";
+
+        setTimeout(
+          () => {
+            playSound("win");
+            document.getElementById("meterFill").style.width = percentage + "%";
+            let message =
+              customMessage ||
+              (percentage > 80
+                ? `🔥 ${percentage}% - Absolute Soulmates!`
+                : percentage > 60
+                  ? `💖 ${percentage}% - Great Match!`
+                  : percentage > 40
+                    ? `😊 ${percentage}% - Sweet Potential!`
+                    : `💔 ${percentage}% - Opposites attract? Maybe not...`);
+            document.getElementById("loveResult").innerText = message;
+          },
+          isHardMode ? 1200 : 800,
+        );
+      }
+
+      // Game 2: Heart Match Memory
+      const baseEmojis = ["💖", "💕", "💌", "🌹", "🎁", "🧸"];
+      const hardEmojis = ["💖", "💕", "💌", "🌹", "🎁", "🧸", "💍", "💘", "👑"];
+      let flippedCards = [],
+        matchedPairs = 0,
+        memoryStartTime,
+        memoryTimerInterval,
+        memoryCountdown,
+        memoryTimeLeft = 120,
+        isMemoryActive = false;
+
+      function initMemoryGame() {
+        clearInterval(memoryTimerInterval);
+        clearInterval(memoryCountdown);
+        isMemoryActive = false;
+        const grid = document.getElementById("memoryGrid");
+        grid.innerHTML = "";
+        flippedCards = [];
+        matchedPairs = 0;
+
+        const activeEmojis = isHardMode ? hardEmojis : baseEmojis;
+        const doubled = [...activeEmojis, ...activeEmojis].sort(
+          () => 0.5 - Math.random(),
+        );
+
+        grid.classList.toggle("hard-grid", isHardMode);
+        document.getElementById("memoryTimer").innerText = isHardMode
+          ? `Time Left: 120s`
+          : "Time: 0.0s";
+
+        doubled.forEach((emoji) => {
+          const card = document.createElement("div");
+          card.classList.add("card-mem");
+          card.dataset.emoji = emoji;
+          card.innerText = "?";
+          card.onclick = () => flipCard(card, activeEmojis.length);
+          grid.appendChild(card);
+        });
+      }
+
+      function flipCard(card, totalPairs) {
+        playSound("click");
+        if (!isMemoryActive) {
+          isMemoryActive = true;
+          memoryStartTime = Date.now();
+          if (isHardMode) {
+            memoryTimeLeft = 120;
+            memoryCountdown = setInterval(() => {
+              memoryTimeLeft--;
+              document.getElementById("memoryTimer").innerText =
+                `Time Left: ${memoryTimeLeft}s`;
+              if (memoryTimeLeft <= 0) {
+                clearInterval(memoryCountdown);
+                playSound("bomb");
+                alert("⏳ Time is up!");
+                initMemoryGame();
+              }
+            }, 1000);
+          } else {
+            memoryTimerInterval = setInterval(() => {
+              document.getElementById("memoryTimer").innerText =
+                `Time: ${((Date.now() - memoryStartTime) / 1000).toFixed(1)}s`;
+            }, 100);
+          }
+        }
+
+        if (flippedCards.length < 2 && !card.classList.contains("flipped")) {
+          card.classList.add("flipped");
+          card.innerText = card.dataset.emoji;
+          flippedCards.push(card);
+          if (flippedCards.length === 2)
+            setTimeout(() => checkMatch(totalPairs), 500);
+        }
+      }
+
+      function checkMatch(totalPairs) {
+        const [c1, c2] = flippedCards;
+        if (c1.dataset.emoji === c2.dataset.emoji) {
+          playSound("match");
+          matchedPairs++;
+          if (matchedPairs === totalPairs) {
+            clearInterval(memoryTimerInterval);
+            clearInterval(memoryCountdown);
+            playSound("win");
+            alert(
+              `🎉 You matched all cards in ${((Date.now() - memoryStartTime) / 1000).toFixed(1)}s!`,
+            );
+          }
+        } else {
+          c1.classList.remove("flipped");
+          c2.classList.remove("flipped");
+          c1.innerText = "?";
+          c2.innerText = "?";
+        }
+        flippedCards = [];
+      }
+
+      // Game 3: Love Fortune Cookie
+      const fortunes = [
+        "A surprise romantic gesture is heading your way! 💌",
+        "Someone special thinks about you more than you know. 💭",
+        "Laughter will be the key to your heart this week. 😄",
+        "An exciting new connection is right around the corner! ✨",
+        "Your charm is irresistible today. Use it wisely! 😉",
+        "True love is built on shared moments and good food. 🍕",
+        "An unexpected compliment will brighten your romantic spark today! 🌟",
+        "Love favors the bold—say what you truly feel! 💕",
+        "A cozy date night is written in your near future! 🍷",
+        "Happiness in love comes when you least expect it! 🌈",
+      ];
+
+      let isCookieOpened = false,
+        cookieTimer;
+      function crackCookie() {
+        if (isCookieOpened) return;
+        playSound("cookie");
+        isCookieOpened = true;
+        const cookie = document.getElementById("cookieIcon");
+        cookie.innerText = "🥠💥";
+        cookie.classList.add("disabled");
+
+        const randomFortune =
+          fortunes[Math.floor(Math.random() * fortunes.length)];
+        const text = document.getElementById("fortuneText");
+        if (isHardMode) {
+          text.innerText = `${randomFortune} (Self-destructs in 5s!)`;
+          cookieTimer = setTimeout(() => {
+            text.innerText = "🔒 Fortune expired!";
+          }, 5000);
+        } else {
+          text.innerText = randomFortune;
+        }
+      }
+
+      function resetCookie() {
+        playSound("click");
+        clearTimeout(cookieTimer);
+        isCookieOpened = false;
+        const cookie = document.getElementById("cookieIcon");
+        cookie.innerText = "🥠";
+        cookie.classList.remove("disabled");
+        document.getElementById("fortuneText").innerText =
+          "Click the cookie to open it...";
+      }
+
+      // Game 4: Cupid Target Shooting
+      let canvas,
+        ctx,
+        targets = [],
+        particles = [],
+        cupidScore = 0,
+        cupidLoop,
+        cupidWon = false;
+
+      function startCupidGame() {
+        canvas = document.getElementById("cupidCanvas");
+        ctx = canvas.getContext("2d");
+        cupidScore = 0;
+        cupidWon = false;
+        const targetScore = isHardMode ? 200 : 100;
+        document.getElementById("cupidTarget").innerText = targetScore;
+        document.getElementById("cupidScore").innerText = cupidScore;
+        targets = [];
+        particles = [];
+        clearInterval(cupidLoop);
+
+        cupidLoop = setInterval(() => {
+          if (cupidWon) return;
+          if (targets.length < (isHardMode ? 7 : 5) && Math.random() < 0.3) {
+            targets.push({
+              x: Math.random() * (canvas.width - 40) + 20,
+              y: canvas.height + 20,
+              speed: isHardMode
+                ? Math.random() * 2.2 + 2
+                : Math.random() * 1.5 + 1,
+              drift: isHardMode ? Math.random() * 2 - 1 : 0,
+              size: isHardMode ? 16 : 22,
+            });
+          }
+          updateCupidGame();
+        }, 30);
+
+        const handleShooting = (clientX, clientY) => {
+          if (cupidWon) return;
+          playSound("pop");
+          const rect = canvas.getBoundingClientRect();
+          const scaleX = canvas.width / rect.width;
+          const scaleY = canvas.height / rect.height;
+          const clickX = (clientX - rect.left) * scaleX;
+          const clickY = (clientY - rect.top) * scaleY;
+
+          targets.forEach((target, index) => {
+            if (
+              Math.hypot(target.x - clickX, target.y - clickY) <
+              target.size + 12
+            ) {
+              for (let p = 0; p < 5; p++) {
+                particles.push({
+                  x: target.x,
+                  y: target.y,
+                  vx: (Math.random() - 0.5) * 6,
+                  vy: (Math.random() - 0.5) * 6,
+                  alpha: 1,
+                  char: ["✨", "💖", "💥"][Math.floor(Math.random() * 3)],
+                });
+              }
+              targets.splice(index, 1);
+              cupidScore += isHardMode ? 20 : 10;
+              document.getElementById("cupidScore").innerText = cupidScore;
+
+              if (cupidScore >= targetScore && !cupidWon) {
+                cupidWon = true;
+                clearInterval(cupidLoop);
+                playSound("win");
+                setTimeout(() => {
+                  alert(
+                    `🏹 Cupid's Victory! You reached ${targetScore} Points!`,
+                  );
+                  startCupidGame();
+                }, 100);
+              }
+            }
+          });
+        };
+
+        canvas.onclick = (e) => handleShooting(e.clientX, e.clientY);
+        canvas.ontouchstart = (e) => {
+          if (e.touches.length > 0)
+            handleShooting(e.touches[0].clientX, e.touches[0].clientY);
+        };
+      }
+
+      function updateCupidGame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        targets.forEach((target, index) => {
+          target.y -= target.speed;
+          target.x += target.drift;
+          ctx.fillStyle = isHardMode ? "#b5179e" : "#ff4d6d";
+          ctx.font = `${target.size}px Arial`;
+          ctx.fillText("❤️", target.x - target.size / 2, target.y);
+          if (target.y < -20) targets.splice(index, 1);
+        });
+
+        particles.forEach((p, index) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.05;
+          if (p.alpha <= 0) {
+            particles.splice(index, 1);
+            return;
+          }
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.font = "14px Arial";
+          ctx.fillText(p.char, p.x, p.y);
+          ctx.globalAlpha = 1;
+        });
+      }
+
+      // Game 5: Whack-a-Gift
+      let whackScore = 0,
+        whackTimeLeft = 25,
+        whackTimer,
+        whackLoop,
+        isWhackRunning = false;
+
+      function resetWhackGame() {
+        clearInterval(whackTimer);
+        clearInterval(whackLoop);
+        isWhackRunning = false;
+        whackScore = 0;
+        whackTimeLeft = 25;
+        document.getElementById("whackScore").innerText = whackScore;
+        document.getElementById("whackTime").innerText = whackTimeLeft;
+        document
+          .querySelectorAll(".whack-item")
+          .forEach((item) => item.classList.remove("up"));
+      }
+
+      function startWhackGame() {
+        playSound("click");
+        resetWhackGame();
+        isWhackRunning = true;
+        const holes = document.querySelectorAll(".whack-hole");
+
+        whackLoop = setInterval(
+          () => {
+            const randomHole = holes[Math.floor(Math.random() * holes.length)];
+            const item = randomHole.querySelector(".whack-item");
+            if (!item.classList.contains("up")) {
+              item.innerText = isHardMode && Math.random() < 0.25 ? "💣" : "🎁";
+              item.dataset.type = item.innerText === "💣" ? "trap" : "good";
+              item.classList.add("up");
+              setTimeout(
+                () => item.classList.remove("up"),
+                isHardMode ? 1200 : 1400,
+              );
+            }
+          },
+          isHardMode ? 850 : 1000,
+        );
+
+        whackTimer = setInterval(() => {
+          whackTimeLeft--;
+          document.getElementById("whackTime").innerText = whackTimeLeft;
+          if (whackTimeLeft <= 0) {
+            clearInterval(whackTimer);
+            clearInterval(whackLoop);
+            isWhackRunning = false;
+            playSound("win");
+            alert(`⏱️ Time's up! Final Whack Score: ${whackScore}`);
+            resetWhackGame();
+          }
+        }, 1000);
+      }
+
+      const handleWhackHit = (hole, clientX, clientY) => {
+        if (!isWhackRunning) return;
+        const item = hole.querySelector(".whack-item");
+        if (!item.classList.contains("up")) return;
+
+        const rect = hole.getBoundingClientRect();
+        const clickX = clientX - rect.left;
+        const clickY = clientY - rect.top;
+
+        const hammerEffect = document.createElement("div");
+        hammerEffect.classList.add("whack-effect");
+        hammerEffect.innerText = "🔨";
+        hammerEffect.style.left = `${clickX - 20}px`;
+        hammerEffect.style.top = `${clickY - 30}px`;
+        hole.appendChild(hammerEffect);
+        setTimeout(() => hammerEffect.remove(), 350);
+
+        const scorePop = document.createElement("div");
+        scorePop.classList.add("whack-score-pop");
+
+        if (item.dataset.type === "trap") {
+          playSound("bomb");
+          whackScore = Math.max(0, whackScore - 5);
+          scorePop.innerText = "-5";
+          scorePop.classList.add("minus");
+        } else {
+          playSound("whack");
+          whackScore += 10;
+          scorePop.innerText = "+10";
+        }
+
+        scorePop.style.left = `${clickX - 15}px`;
+        scorePop.style.top = `${clickY - 20}px`;
+        hole.appendChild(scorePop);
+        setTimeout(() => scorePop.remove(), 700);
+
+        document.getElementById("whackScore").innerText = whackScore;
+        item.classList.remove("up");
+      };
+
+      document.querySelectorAll(".whack-hole").forEach((hole) => {
+        hole.addEventListener("click", (e) =>
+          handleWhackHit(hole, e.clientX, e.clientY),
+        );
+        hole.addEventListener("touchstart", (e) => {
+          if (e.touches.length > 0)
+            handleWhackHit(hole, e.touches[0].clientX, e.touches[0].clientY);
+        });
+      });
+
+      // Game 6: Maze Solver
+      let mazeGrid = [],
+        mazeSize = 9,
+        playerPos = { x: 0, y: 0 },
+        goalPos = { x: 8, y: 8 };
+
+      function initMazeGame() {
+        mazeSize = isHardMode ? 11 : 9;
+        goalPos = { x: mazeSize - 1, y: mazeSize - 1 };
+        playerPos = { x: 0, y: 0 };
+
+        mazeGrid = Array.from({ length: mazeSize }, () =>
+          Array(mazeSize).fill(1),
+        );
+
+        function carve(cx, cy) {
+          mazeGrid[cy][cx] = 0;
+          const dirs = [
+            [0, -2],
+            [0, 2],
+            [-2, 0],
+            [2, 0],
+          ].sort(() => Math.random() - 0.5);
+
+          for (let [dx, dy] of dirs) {
+            const nx = cx + dx,
+              ny = cy + dy;
+            if (
+              nx >= 0 &&
+              nx < mazeSize &&
+              ny >= 0 &&
+              ny < mazeSize &&
+              mazeGrid[ny][nx] === 1
+            ) {
+              mazeGrid[cy + dy / 2][cx + dx / 2] = 0;
+              carve(nx, ny);
+            }
+          }
+        }
+
+        carve(0, 0);
+        mazeGrid[0][0] = 0;
+        mazeGrid[0][1] = 0;
+        mazeGrid[1][0] = 0;
+        mazeGrid[goalPos.y][goalPos.x] = 0;
+        mazeGrid[goalPos.y - 1][goalPos.x] = 0;
+        mazeGrid[goalPos.y][goalPos.x - 1] = 0;
+
+        renderMaze();
+      }
+
+      function renderMaze() {
+        const board = document.getElementById("mazeBoard");
+        const cellSize = isHardMode ? 24 : 28;
+        board.style.gridTemplateColumns = `repeat(${mazeSize}, ${cellSize}px)`;
+        board.innerHTML = "";
+
+        for (let r = 0; r < mazeSize; r++) {
+          for (let c = 0; c < mazeSize; c++) {
+            const cell = document.createElement("div");
+            cell.classList.add("maze-cell");
+            cell.style.width = `${cellSize}px`;
+            cell.style.height = `${cellSize}px`;
+            if (mazeGrid[r][c] === 1) cell.classList.add("wall");
+
+            if (r === playerPos.y && c === playerPos.x) cell.innerText = "💘";
+            else if (r === goalPos.y && c === goalPos.x) cell.innerText = "💖";
+            board.appendChild(cell);
+          }
+        }
+      }
+
+      function movePlayer(dx, dy) {
+        const newX = playerPos.x + dx;
+        const newY = playerPos.y + dy;
+        if (
+          newX >= 0 &&
+          newX < mazeSize &&
+          newY >= 0 &&
+          newY < mazeSize &&
+          mazeGrid[newY][newX] !== 1
+        ) {
+          playSound("step");
+          playerPos.x = newX;
+          playerPos.y = newY;
+          renderMaze();
+          if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
+            playSound("win");
+            setTimeout(() => {
+              alert("🎉 Maze Solved! Cupid reached the Heart!");
+              initMazeGame();
+            }, 150);
+          }
+        }
+      }
+
+      window.addEventListener("keydown", (e) => {
+        if (currentGameIndex === 5) {
+          if (e.key === "ArrowUp") movePlayer(0, -1);
+          if (e.key === "ArrowDown") movePlayer(0, 1);
+          if (e.key === "ArrowLeft") movePlayer(-1, 0);
+          if (e.key === "ArrowRight") movePlayer(1, 0);
+        }
+      });
+
+      // Game 7: Heart Catcher (Hard Mode: 80% Bombs, Target 200)
+      let catcherCanvas,
+        catcherCtx,
+        basketX = 130,
+        catcherScore = 0,
+        catcherLives = 3,
+        fallingItems = [],
+        explosionParticles = [],
+        catcherLoop,
+        catcherWon = false;
+
+      function startCatcherGame() {
+        playSound("click");
+        catcherCanvas = document.getElementById("catcherCanvas");
+        catcherCtx = catcherCanvas.getContext("2d");
+        basketX = 130;
+        catcherScore = 0;
+        catcherLives = 3;
+        fallingItems = [];
+        explosionParticles = [];
+        catcherWon = false;
+
+        const targetScore = isHardMode ? 200 : 100;
+        document.getElementById("catcherTarget").innerText = targetScore;
+        document.getElementById("catcherScore").innerText = catcherScore;
+        document.getElementById("catcherLives").innerText = catcherLives;
+        document.getElementById("catcherSubtitle").innerText = isHardMode
+          ? `Reach ${targetScore} points! DANGER: Heavy Bomb Rain!`
+          : `Reach ${targetScore} points! Avoid bombs & catch falling hearts!`;
+
+        clearInterval(catcherLoop);
+        catcherLoop = setInterval(() => {
+          if (catcherWon) return;
+
+          const spawnChance = isHardMode ? 0.12 : 0.05;
+          if (Math.random() < spawnChance) {
+            // In Hard Mode, 80% of falling items are bombs (hearts are rare!)
+            const bombChance = isHardMode ? 0.8 : 0.2;
+            fallingItems.push({
+              x: Math.random() * (catcherCanvas.width - 30) + 15,
+              y: 0,
+              speed: isHardMode
+                ? Math.random() * 2.5 + 3.0
+                : Math.random() * 1.2 + 1.6,
+              isBomb: Math.random() < bombChance,
+            });
+          }
+          updateCatcherGame();
+        }, 30);
+
+        const setBasketPos = (clientX) => {
+          const rect = catcherCanvas.getBoundingClientRect();
+          const scaleX = catcherCanvas.width / rect.width;
+          basketX = (clientX - rect.left) * scaleX - 25;
+        };
+
+        catcherCanvas.onmousemove = (e) => setBasketPos(e.clientX);
+        catcherCanvas.ontouchmove = (e) => {
+          if (e.touches.length > 0) setBasketPos(e.touches[0].clientX);
+        };
+      }
+
+      function triggerBombExplosion(x, y) {
+        for (let i = 0; i < 12; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 4 + 2;
+          explosionParticles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+            scale: Math.random() * 0.8 + 0.8,
+            char: ["💥", "🔥", "✨", "⚡"][Math.floor(Math.random() * 4)],
+          });
+        }
+      }
+
+      function drawHighContrastBasket(x, y) {
+        const width = 50;
+        const height = 24;
+
+        // Base Shadow / Glow
+        catcherCtx.fillStyle = "rgba(255, 117, 143, 0.4)";
+        catcherCtx.beginPath();
+        catcherCtx.ellipse(
+          x + width / 2,
+          y + height + 2,
+          28,
+          6,
+          0,
+          0,
+          Math.PI * 2,
+        );
+        catcherCtx.fill();
+
+        // Basket Handle
+        catcherCtx.strokeStyle = "#ffd166";
+        catcherCtx.lineWidth = 3;
+        catcherCtx.beginPath();
+        catcherCtx.arc(x + width / 2, y + 2, 18, Math.PI, 0);
+        catcherCtx.stroke();
+
+        // Basket Main Body
+        catcherCtx.fillStyle = "#ffb703";
+        catcherCtx.beginPath();
+        catcherCtx.moveTo(x, y + 4);
+        catcherCtx.lineTo(x + width, y + 4);
+        catcherCtx.lineTo(x + width - 8, y + height);
+        catcherCtx.lineTo(x + 8, y + height);
+        catcherCtx.closePath();
+        catcherCtx.fill();
+
+        // High Contrast Rim
+        catcherCtx.strokeStyle = "#ffffff";
+        catcherCtx.lineWidth = 2.5;
+        catcherCtx.beginPath();
+        catcherCtx.roundRect(x - 2, y + 1, width + 4, 6, 3);
+        catcherCtx.fillStyle = "#fb8500";
+        catcherCtx.fill();
+        catcherCtx.stroke();
+
+        // Weave Pattern Accent Lines
+        catcherCtx.strokeStyle = "rgba(0, 0, 0, 0.15)";
+        catcherCtx.lineWidth = 1.5;
+        catcherCtx.beginPath();
+        catcherCtx.moveTo(x + 12, y + 8);
+        catcherCtx.lineTo(x + width - 16, y + height - 2);
+        catcherCtx.moveTo(x + width - 12, y + 8);
+        catcherCtx.lineTo(x + 16, y + height - 2);
+        catcherCtx.stroke();
+      }
+
+      function updateCatcherGame() {
+        catcherCtx.clearRect(0, 0, catcherCanvas.width, catcherCanvas.height);
+
+        // Midnight background accents
+        catcherCtx.fillStyle = "rgba(255, 255, 255, 0.25)";
+        catcherCtx.fillRect(40, 30, 2, 2);
+        catcherCtx.fillRect(180, 70, 3, 3);
+        catcherCtx.fillRect(270, 40, 2, 2);
+
+        // Draw Basket
+        drawHighContrastBasket(basketX, catcherCanvas.height - 30);
+
+        const targetScore = isHardMode ? 200 : 100;
+
+        // Handle Falling Items
+        fallingItems.forEach((item, i) => {
+          item.y += item.speed;
+          catcherCtx.font = "24px Arial";
+          catcherCtx.fillText(item.isBomb ? "💣" : "❤️", item.x, item.y);
+
+          // Collision with Basket
+          if (
+            item.y >= catcherCanvas.height - 35 &&
+            Math.abs(item.x - (basketX + 10)) < 35
+          ) {
+            if (item.isBomb) {
+              playSound("bomb");
+              catcherLives--;
+              document.getElementById("catcherLives").innerText = catcherLives;
+              triggerBombExplosion(item.x, item.y);
+            } else {
+              playSound("pop");
+              catcherScore += 10;
+              document.getElementById("catcherScore").innerText = catcherScore;
+
+              if (catcherScore >= targetScore && !catcherWon) {
+                catcherWon = true;
+                clearInterval(catcherLoop);
+                playSound("win");
+                setTimeout(() => {
+                  alert(
+                    `🧺 Ultimate Catcher Victory! You reached ${targetScore} Points on Hard Mode!`,
+                  );
+                  startCatcherGame();
+                }, 150);
+              }
+            }
+            fallingItems.splice(i, 1);
+          } else if (item.y > catcherCanvas.height) {
+            fallingItems.splice(i, 1);
+          }
+        });
+
+        // Explosion Particles
+        explosionParticles.forEach((p, idx) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.06;
+
+          if (p.alpha <= 0) {
+            explosionParticles.splice(idx, 1);
+            return;
+          }
+
+          catcherCtx.globalAlpha = Math.max(0, p.alpha);
+          catcherCtx.font = `${Math.floor(16 * p.scale)}px Arial`;
+          catcherCtx.fillText(p.char, p.x, p.y);
+          catcherCtx.globalAlpha = 1;
+        });
+
+        if (catcherLives <= 0 && !catcherWon) {
+          clearInterval(catcherLoop);
+          playSound("bomb");
+          alert(`💥 Game Over! Final Catcher Score: ${catcherScore}`);
+          startCatcherGame();
+        }
+      }
+
+      // Game 8: Love Quiz
+      const easyQuizQuestions = [
+        {
+          q: "Which city is famously known as the City of Love?",
+          opts: ["Paris", "Rome", "Venice", "New York"],
+          a: 0,
+        },
+        {
+          q: "What fruit is historically called the 'Love Apple'?",
+          opts: ["Strawberry", "Tomato", "Apple", "Peach"],
+          a: 1,
+        },
+        {
+          q: "Who is the Roman god of love?",
+          opts: ["Apollo", "Mars", "Cupid", "Jupiter"],
+          a: 2,
+        },
+        {
+          q: "What flower is most traditionally given on Valentine's Day?",
+          opts: ["Tulip", "Red Rose", "Sunflower", "Lily"],
+          a: 1,
+        },
+        {
+          q: "What weapon is Cupid famous for carrying?",
+          opts: ["Sword & Shield", "Bow & Arrow", "Magic Wand", "Spear"],
+          a: 1,
+        },
+      ];
+
+      const hardQuizQuestions = [
+        {
+          q: "What is the traditional gift for a 50th Wedding Anniversary?",
+          opts: ["Silver", "Gold", "Diamond", "Ruby"],
+          a: 1,
+        },
+        {
+          q: "In Greek mythology, who was Cupid's mother?",
+          opts: ["Hera", "Aphrodite", "Athena", "Artemis"],
+          a: 1,
+        },
+        {
+          q: "Which ancient civilization wrote the oldest surviving love poem?",
+          opts: ["Greeks", "Sumerians", "Egyptians", "Romans"],
+          a: 1,
+        },
+      ];
+
+      let quizIdx = 0,
+        quizScore = 0,
+        activeQuizQuestions = [],
+        quizTimeLeft = 10,
+        quizTimerInterval;
+
+      function initQuizGame() {
+        playSound("click");
+        clearInterval(quizTimerInterval);
+        quizIdx = 0;
+        quizScore = 0;
+        document.getElementById("quizScoreText").innerText =
+          `Score: ${quizScore}`;
+
+        const pool = isHardMode ? hardQuizQuestions : easyQuizQuestions;
+        activeQuizQuestions = [...pool]
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 5);
+
+        const timerDisplay = document.getElementById("quizTimerDisplay");
+        timerDisplay.style.display = isHardMode ? "block" : "none";
+
+        loadQuizQuestion();
+      }
+
+      function loadQuizQuestion() {
+        clearInterval(quizTimerInterval);
+
+        if (quizIdx >= activeQuizQuestions.length) {
+          playSound("win");
+          document.getElementById("quizQuestion").innerText =
+            "🎉 Quiz Complete!";
+          document.getElementById("quizOptions").innerHTML =
+            `<p style="font-size: 1.1rem; margin-top: 10px;">Final Score: <b>${quizScore}/${activeQuizQuestions.length * 10}</b></p>`;
+          document.getElementById("quizTimerDisplay").style.display = "none";
+          return;
+        }
+
+        if (isHardMode) {
+          quizTimeLeft = 10;
+          document.getElementById("quizTimerDisplay").innerText =
+            `Time Left: ${quizTimeLeft}s`;
+          quizTimerInterval = setInterval(() => {
+            quizTimeLeft--;
+            document.getElementById("quizTimerDisplay").innerText =
+              `Time Left: ${quizTimeLeft}s`;
+            if (quizTimeLeft <= 0) {
+              clearInterval(quizTimerInterval);
+              playSound("bomb");
+              quizIdx++;
+              loadQuizQuestion();
+            }
+          }, 1000);
+        }
+
+        const current = activeQuizQuestions[quizIdx];
+        document.getElementById("quizQuestion").innerText =
+          `(${quizIdx + 1}/${activeQuizQuestions.length}) ${current.q}`;
+        const optDiv = document.getElementById("quizOptions");
+        optDiv.innerHTML = "";
+
+        current.opts.forEach((opt, i) => {
+          const btn = document.createElement("button");
+          btn.classList.add("quiz-option");
+          btn.innerText = opt;
+          btn.onclick = () => {
+            clearInterval(quizTimerInterval);
+            if (i === current.a) {
+              playSound("match");
+              quizScore += 10;
+            } else {
+              playSound("bomb");
+            }
+            document.getElementById("quizScoreText").innerText =
+              `Score: ${quizScore}`;
+            quizIdx++;
+            loadQuizQuestion();
+          };
+          optDiv.appendChild(btn);
+        });
+      }
+
+      initFloatingHearts();
+      initMemoryGame();
+    </script>
+  </body>
+</html>

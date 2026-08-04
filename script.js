@@ -205,15 +205,12 @@ const eventBtn = document.getElementById("event-day-btn");
 // Format to YYYY-MM-DD
 const currentDate = `${year}-${month}-${day}`;
 
-// 3. Reveal the button if the dates match
-if (currentDate === targetEventDate) {
-  // Note: If your styles.css requires this button to be a flex item,
-  // change "inline-block" to "flex" or "block" accordingly.
+eventBtn.style.display = "inline-block";
 
-  eventBtn.style.display = "inline-block";
-
-  eventBtn.addEventListener("click", function () {
-    // Replace the URL below with the page you want to redirect to
+eventBtn.addEventListener("click", function () {
+  if (currentDate === targetEventDate) {
     window.location.href = "nationalday.html";
-  });
-}
+  } else {
+    window.location.href = "games.html";
+  }
+});
